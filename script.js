@@ -69,6 +69,7 @@ const DOMController = (function () {
       boardContainer.appendChild(boardItem);
     });
     bindEvents();
+    updateCurrentTurn();
   };
 
   const bindEvents = () => {
@@ -84,6 +85,11 @@ const DOMController = (function () {
         }
       });
     });
+  };
+
+  const updateCurrentTurn = () => {
+    const currentTurn = document.querySelector('.current-turn');
+    currentTurn.textContent = `Player ${Game.getCurrentPlayer()}'s turn`;
   };
 
   const updateWinDisplay = (result = 'tie') => {
@@ -106,6 +112,7 @@ const DOMController = (function () {
     const winDisplay = document.querySelector('.winner-display');
     winDisplay.innerHTML = '';
   };
+
 
   return { render, updateWinDisplay };
 })();
