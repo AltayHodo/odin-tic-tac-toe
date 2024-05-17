@@ -103,11 +103,6 @@ const DOMController = (function () {
     } else {
       winDisplay.textContent = 'It\'s a tie!';
     }
-    const resetButton = document.createElement('button');
-    resetButton.classList.add('reset-button');
-    resetButton.textContent = 'Reset Game';
-    winDisplay.appendChild(resetButton);
-    resetButton.addEventListener('click', reset);
   };
 
   const reset = () => {
@@ -115,6 +110,9 @@ const DOMController = (function () {
     render();
     updateCurrentTurn();
   };
+
+  const resetButton = document.querySelector('.reset-button');
+  resetButton.addEventListener('click', reset);
 
 
   return { render, updateWinDisplay, updateCurrentTurn };
