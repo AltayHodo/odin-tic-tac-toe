@@ -48,7 +48,13 @@ const Game = (function () {
     }
   };
 
-  return { getGameArray, getCurrentPlayer, playTurn, isGameOver };
+  const reset = () => {
+    gameOver = false;
+    currentPlayer = 'X';
+    gameArray.fill('');
+  }
+
+  return { getGameArray, getCurrentPlayer, playTurn, isGameOver, reset };
 })();
 
 const DOMController = (function () {
@@ -87,6 +93,18 @@ const DOMController = (function () {
     } else {
       winDisplay.textContent = 'It\'s a tie!';
     }
+    const resetButton = document.createElement('button');
+    resetButton.classList.add('reset-button');
+    resetButton.textContent = 'Reset Game';
+    winDisplay.appendChild(resetButton);
+    resetButton.addEventListener('click', reset);
+  };
+
+  const reset = () => {
+    Game.reset();
+    render();
+    const winDisplay = document.querySelector('.winner-display');
+    winDisplay.innerHTML = '';
   };
 
   return { render, updateWinDisplay };
