@@ -86,6 +86,29 @@ const DOMController = (function () {
           }
         }
       });
+
+      item.addEventListener('mouseover', (e) => {
+        if (!Game.isGameOver()) {
+          const target = e.target;
+          const index = target.dataset.index;
+          if (Game.getGameArray()[index] === '') {
+            const currentPlayer = Game.getCurrentPlayer();
+            target.style.opacity = '0.5';
+            target.textContent = currentPlayer;
+          }
+        }
+      });
+
+      item.addEventListener('mouseout', (e) => {
+        if(!Game.isGameOver()) {
+          const target = e.target;
+          const index = target.dataset.index;
+          if (Game.getGameArray()[index] === ''){
+            target.style.opacity = '1';
+            target.textContent = '';
+          }
+        }
+      })
     });
   };
 
