@@ -81,7 +81,6 @@ const DOMController = (function () {
           const target = e.target;
           const index = target.dataset.index;
           if (Game.playTurn(index)) {
-            // updateCurrentTurn();
             render();
           }
         }
