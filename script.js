@@ -11,10 +11,18 @@ const Game = (function () {
   const isGameOver = () => gameOver;
 
   const playTurn = (index) => {
-    if (gameArray[index] === '') {
+    if (gameArray[index] === '' && !gameOver) {
       gameArray[index] = currentPlayer;
-      checkForWin();
-      updateCurrentPlayer();
+      if (checkForWin()) {
+        DOMController.updateWinDisplay(currentPlayer);
+        gameOver = true;
+      } else if (checkForTie()) {
+        DOMController.updateWinDisplay();
+        gameOver = true;
+      } else {
+        updateCurrentPlayer();
+        DOMController.updateCurrentTurn();
+      }
       return true;
     }
     return false;
@@ -32,21 +40,15 @@ const Game = (function () {
       [2, 4, 6],
     ];
 
-    winningCombinations.forEach(combination => {
+    return winningCombinations.some(combination => {
       const [a, b, c] = combination;
-      if (gameArray[a] && gameArray[a] === gameArray[b] && gameArray[a] === gameArray[c]) {
-        // alert(`Player ${currentPlayer} wins!`);
-        DOMController.updateWinDisplay(currentPlayer)
-        gameOver = true;
-      }
+      return gameArray[a] && gameArray[a] === gameArray[b] && gameArray[a] === gameArray[c];
     });
-
-    if (gameArray.every(item => item !== '')) {
-      // alert('It\'s a tie');
-      DOMController.updateWinDisplay();
-      gameOver = true;
-    }
   };
+
+  const checkForTie = () => {
+    return gameArray.every(item => item !== '');
+  }
 
   const reset = () => {
     gameOver = false;
@@ -69,7 +71,6 @@ const DOMController = (function () {
       boardContainer.appendChild(boardItem);
     });
     bindEvents();
-    updateCurrentTurn();
   };
 
   const bindEvents = () => {
@@ -80,6 +81,7 @@ const DOMController = (function () {
           const target = e.target;
           const index = target.dataset.index;
           if (Game.playTurn(index)) {
+            // updateCurrentTurn();
             render();
           }
         }
@@ -88,12 +90,14 @@ const DOMController = (function () {
   };
 
   const updateCurrentTurn = () => {
+    console.log('currentDis')
     const currentTurn = document.querySelector('.current-turn');
     currentTurn.textContent = `Player ${Game.getCurrentPlayer()}'s turn`;
   };
 
   const updateWinDisplay = (result = 'tie') => {
-    const winDisplay = document.querySelector('.winner-display');
+    console.log('winDis')
+    const winDisplay = document.querySelector('.current-turn');
     if (result === 'X' || result === 'O') {
       winDisplay.textContent = `Player ${result} wins!`;
     } else {
@@ -109,17 +113,17 @@ const DOMController = (function () {
   const reset = () => {
     Game.reset();
     render();
-    const winDisplay = document.querySelector('.winner-display');
-    winDisplay.innerHTML = '';
+    updateCurrentTurn();
   };
 
 
-  return { render, updateWinDisplay };
+  return { render, updateWinDisplay, updateCurrentTurn };
 })();
 
 const Main = (() => {
   const init = () => {
     DOMController.render();
+    DOMController.updateCurrentTurn();
   }
 
   return { init };
