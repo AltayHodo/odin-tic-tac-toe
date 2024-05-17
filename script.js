@@ -38,7 +38,47 @@ const Game = (function () {
         alert('It\'s a tie');
       }
     });
+  };
+
+  return { getGameArray, getCurrentPlayer, playTurn };
+})();
+
+const DOMController = (function () {
+  const render = () => {
+    const boardContainer = document.querySelector('.board-container');
+    boardContainer.innerHTML = '';
+    Game.getGameArray().forEach((item, index) => {
+      const boardItem = document.createElement('div');
+      boardItem.textContent = item;
+      boardItem.classList.add('board-item');
+      boardItem.dataset.index = index;
+      boardContainer.appendChild(boardItem);
+    });
+    bindEvents();
+  };
+
+  const bindEvents = () => {
+    const boardItems = document.querySelectorAll('.board-item');
+    boardItems.forEach(item => {
+      item.addEventListener('click', (e) => {
+        const target = e.target;
+        const index = target.dataset.index;
+        if (Game.playTurn(index)){
+          render();
+        }
+      });
+    });
+  };
+
+  return { render };
+})();
+
+const Main = (() => {
+  const init = () => {
+    DOMController.render();
   }
 
-  return { getGameArray, getCurrentPlayer, playTurn }
+  return { init };
 })();
+
+Main.init();
