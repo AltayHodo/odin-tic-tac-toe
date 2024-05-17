@@ -7,6 +7,9 @@ const Game = (function () {
 
   const updateCurrentPlayer = () => currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
 
+  let gameOver = false;
+  const isGameOver = () => gameOver;
+
   const playTurn = (index) => {
     if (gameArray[index] === '') {
       gameArray[index] = currentPlayer;
@@ -32,15 +35,20 @@ const Game = (function () {
     winningCombinations.forEach(combination => {
       const [a, b, c] = combination;
       if (gameArray[a] && gameArray[a] === gameArray[b] && gameArray[a] === gameArray[c]) {
-        alert(`Player ${currentPlayer} wins!`);
-      }
-      if (gameArray.every(item => item !== '')) {
-        alert('It\'s a tie');
+        // alert(`Player ${currentPlayer} wins!`);
+        DOMController.updateWinDisplay(currentPlayer)
+        gameOver = true;
       }
     });
+
+    if (gameArray.every(item => item !== '')) {
+      // alert('It\'s a tie');
+      DOMController.updateWinDisplay();
+      gameOver = true;
+    }
   };
 
-  return { getGameArray, getCurrentPlayer, playTurn };
+  return { getGameArray, getCurrentPlayer, playTurn, isGameOver };
 })();
 
 const DOMController = (function () {
@@ -61,16 +69,27 @@ const DOMController = (function () {
     const boardItems = document.querySelectorAll('.board-item');
     boardItems.forEach(item => {
       item.addEventListener('click', (e) => {
-        const target = e.target;
-        const index = target.dataset.index;
-        if (Game.playTurn(index)){
-          render();
+        if (!Game.isGameOver()) {
+          const target = e.target;
+          const index = target.dataset.index;
+          if (Game.playTurn(index)) {
+            render();
+          }
         }
       });
     });
   };
 
-  return { render };
+  const updateWinDisplay = (result = 'tie') => {
+    const winDisplay = document.querySelector('.winner-display');
+    if (result === 'X' || result === 'O') {
+      winDisplay.textContent = `Player ${result} wins!`;
+    } else {
+      winDisplay.textContent = 'It\'s a tie!';
+    }
+  };
+
+  return { render, updateWinDisplay };
 })();
 
 const Main = (() => {
